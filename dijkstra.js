@@ -24,6 +24,7 @@ function dijkstra(nodes, source, frontier, dest_func) {
 
         var indexOfPotentialNode = l.source == n.index ? l.target : l.source
         
+
         if (nodes[indexOfPotentialNode].dist != null) { //valid potential point to check
           if (nodes[indexOfPotentialNode].dist == Infinity) { //still has unexplored nodes so far
             

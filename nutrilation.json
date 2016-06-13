@@ -17,7 +17,7 @@
             "instr": "http://www.hsph.harvard.edu/nutritionsource/carbohydrates/fiber/"},
         {"name":"Natural Starch", "index":6, "group":1, "lf":30, "ls":10,
             "instr": "http://healthyeating.sfgate.com/natural-starches-2310.html"},
-        {"name":"Refined Starch", "index":7, "group":2, "lf":30, "ls":10,
+        {"name":"Refined Starch", "index":7, "group":1, "lf":30, "ls":10,
             "instr": "http://www.diagnosisdiet.com/refined-carbohydrate-list/"},
         {"name":"Glucose", "index":8, "group":1, "lf":30, "ls":10,
             "instr": "https://en.wikipedia.org/wiki/Glucose"},
@@ -30,7 +30,7 @@
 
 
         {"name":"Essential Fatty Acids", "index":12, "group":0, "lf":20, "ls":10, "size":50, "next_subs":2,
-            "instr": "https://en.wikipedia.org/wiki/Omega-6_fatty_acid"},
+            "instr": "https://en.wikipedia.org/wiki/Essential_fatty_acid"},
         {"name":"Omega 6", "index":13, "group":0, "lf":20, "ls":10,
             "instr": "https://en.wikipedia.org/wiki/Omega-6_fatty_acid"},
         {"name":"Omega 3", "index":14, "group":0, "lf":30, "ls":10,
@@ -92,7 +92,7 @@
         {"name":"Water Soluble Vitamins", "index":39, "group":0, "lf":20, "ls":10, "size":100, "next_subs":9,
             "instr": "https://en.wikipedia.org/wiki/Omega-6_fatty_acid"},
         {"name":"Biotin B7", "index":40, "group":0, "lf":30, "ls":10,
-            "instr": "https://en.wikipedia.org/wiki/Decorticator"},
+            "instr": "https://en.wikipedia.org/wiki/Biotin"},
         {"name":"Folate B9", "index":41, "group":0, "lf":30, "ls":10,
             "instr": "https://en.wikipedia.org/wiki/Decorticator"},
         {"name":"Niacin B3", "index":42, "group":0, "lf":30, "ls":10,
@@ -161,11 +161,11 @@
         {"name":"Zinc", "index":72, "group":0, "lf":30, "ls":10,
             "instr": "https://en.wikipedia.org/wiki/Decorticator"},
 
-        {"name":"Unnecessary Fats", "index":73, "group":2, "lf":20, "ls":10, "next_subs":2,
+        {"name":"Unnecessary Fats", "index":73, "group":1, "lf":20, "ls":10, "next_subs":2,
             "instr": "https://en.wikipedia.org/wiki/Omega-6_fatty_acid"},
-        {"name":"Saturated Fats", "index":74, "group":2, "lf":30, "ls":10,
+        {"name":"Saturated Fats", "index":74, "group":1, "lf":30, "ls":10,
             "instr": "https://en.wikipedia.org/wiki/Decorticator"},
-        {"name":"Trans Fats", "index":75, "group":2, "lf":30, "ls":10,
+        {"name":"Trans Fats", "index":75, "group":1, "lf":30, "ls":10,
             "instr": "https://en.wikipedia.org/wiki/Decorticator"},
 
 
