@@ -122,34 +122,9 @@ d3.json("nutrilation.json", function(error, json) {
 
   //returns the link length given link l at index i
   function getLinkLength(l, i) {
-    //this function sets the distance to the node based on user skill and link difficulty
-    //all links to same node have the same 4 variables so it is actually dependent on target node
-
-    if (l.uf == null && l.us == null && l.ls == null && l.lf == null) {
-      return -1
-    }
-
-    var min = 25, max = 120, currentDist = min
-    if (l.uf > user.profile.upper_flexibility) {
-      currentDist += (l.uf - user.profile.upper_flexibility)
-    }
-    if (l.lf > user.profile.lower_flexibility) {
-      currentDist += (l.lf - user.profile.lower_flexibility)
-    }
-    if (l.us > user.profile.upper_strength) {
-      currentDist += (l.us - user.profile.upper_strength)
-    }
-    if (l.ls > user.profile.lower_strength) {
-      currentDist += (l.ls - user.profile.lower_strength)
-    }
-
-    if (currentDist > max) {
-      currentDist = max
-    } /*else if (currentDist < min) { 
-      currentDist = min
-    }*/
-    l.value = currentDist
-    return currentDist
+    if (l.length != null)
+      return l.length
+    return 30
   }
 
   dijkstra_initial_setup();
