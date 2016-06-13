@@ -1,0 +1,44 @@
+{
+    "nodes":[
+        {"name":"Hemp", "index":0, "group":1, "lf":20, "ls":10,
+            "instr": "https://en.wikipedia.org/wiki/Hemp"},
+        {"name":"iHemp", "index":1, "group":0, "lf":30, "ls":10,
+            "instr": "http://www.hemp-technologies.com/page83/page83.html"},
+        {"name":"Land", "index":2, "group":0, "lf":30, "ls":10,
+            "instr": "http://www.hemp-technologies.com/page83/page83.html"},
+        {"name":"Loam", "index":3, "group":0, "lf":30, "ls":10,
+            "instr": "https://en.wikipedia.org/wiki/Loam"},
+        {"name":"Tractor", "index":4, "group":0, "lf":30, "ls":10,
+            "instr": "https://en.wikipedia.org/wiki/Decorticator"},
+        {"name":"Decorticator", "index":5, "group":0, "lf":30, "ls":10,
+            "instr": "https://en.wikipedia.org/wiki/Decorticator"},
+        {"name":"Optimal Decorticator", "index":6, "group":0, "lf":30, "ls":10,
+            "instr": "https://en.wikipedia.org/wiki/Decorticator"},
+        {"name":"Alamosa", "index":7, "group":0, "lf":30, "ls":10,
+            "instr": "http://www.landandfarm.com/property/40_Acres_Three_Artesian_Wells_Close_To_Mountains-2543439/"}   
+
+             
+    ],
+    "links":[
+        {"source":0,"target":1,"value":1, "index":0, "uf":0, "lf":30, "us":0, "ls":10, "opacity":0.3},
+        {"source":1,"target":2,"value":1, "index":1, "uf":0, "lf":50, "us":0, "ls":15, "opacity":0.3},
+        {"source":2,"target":3,"value":1, "index":2, "uf":0, "lf":50, "us":0, "ls":15, "opacity":0.3},
+        {"source":2,"target":4,"value":1, "index":3, "uf":0, "lf":50, "us":0, "ls":15, "opacity":0.3},
+        {"source":4,"target":5,"value":1, "index":4, "uf":0, "lf":50, "us":0, "ls":15, "opacity":0.3},
+        {"source":5,"target":6,"value":1, "index":4, "uf":0, "lf":50, "us":0, "ls":15, "opacity":0.3},
+        {"source":3,"target":7,"value":1, "index":5, "uf":0, "lf":50, "us":0, "ls":15, "opacity":0.3}
+    ],
+    "user":{
+        "upper_flexibility":20,
+        "lower_flexibility":20,
+        "upper_strength":20,
+        "lower_strength":20
+    }, 
+    "buttons":[
+        {"num":1, "name":"Select Known Skill", "color":"yellow"},
+        {"num":2, "name":"Select Intermediary Skill", "color":"orange"},
+        {"num":3, "name":"Select Goal Skill", "color":"red"},
+        {"num":4, "name":"Explore", "color":"magenta"},
+        {"num":5, "name":"Reduce User Skill Levels", "color":"cyan"}
+    ]
+}

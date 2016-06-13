@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.link {
+  stroke: #ccc;
+}
+
+
+.node text {
+  pointer-events: none;
+  font: 10px sans-serif;
+
+}
+
+.button text {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
+
+</style>
+<body>
+
+<form name="myform" onSubmit="return handleFormClick()">
+    <input name="Submit"  type="submit" value="New User Profile" >
+    <input type="text" id="myVal" placeholder="Add some text&hellip;">
+  </form>
+<script src="../nutrilation/d3.v3.min.js"></script>  <!-- pulls the whole d3 library into our server instance -->
+<!-- //d3js.org/d3.v3.min.js  this is from a different server, probably slower-->
+<!--../sarahs/d3.v3.min.js put this in above instead to run the local minimal d3, which does not require internet-->
+<script src="dijkstra.js"></script> <!-- nearest point that is in group 1. will find shortest path  -->
+<script>
+
+console.log("Starting new script")
+
+//*********************** Set Global Constants ***********************
+var width = 960, //size constants, if you want to edit the size, change only these
+    height = 500,
+    button_size = 20,
+
+    //button driven pointer modes
+    current_mode = 0,
+    SELECT_RESET_MODE = 0
+    SELECT_KNOWN_SKILL_MODE = 1,
+    SELECT_INTER_SKILL_MODE = 2,
+    SELECT_TARGET_MODE = 3,
+    DRAG_MODE = 4,
+    TEST_MODE = 5,
+    LOAD_USER_MODE = 6,
+
+    //group color constants-- number is equal to the group in skills.json
+    group0_color = "white",
+    group1_color = "yellow",
+    group2_color = "orange",
+    group3_color = "red",
+
+    currentGoals = [],
+
+    user_name = "sarah_profile.json";
+
+
+
+var svg = d3.select("body").append("svg") //sets size for webbrowser
+    .attr("width", width)
+    .attr("height", height);
+
+//*********************** Force Defaults ***********************
+//will gravitate nodes toward center of screen and repel them from each other
+var force = d3.layout.force()
+    .gravity(.15)
+    .charge(-350)
+    .size([width, height]);
+
+var user;
+
+var user_file;
+
+function load_user_profile(user_json_name){
+  d3.json(user_json_name, function(error, json) {
+    if (error) throw error;
+    user = json;
+  })
+}
+if (!user_file) //remove this soon
+  load_user_profile("sarah_profile.json")
+else 
+  load_user_profile(user_file)
+
+
+
+function handleFormClick(event) {
+  console.log(document.getElementById("myVal").value)
+  complete_reset()
+  force.stop()
+  load_user_profile(document.getElementById("myVal").value)
+  force.start()
+  draw_user_profile()
+  /*console.log("calling handleFormClick")
+  console.log(document.getElementById("myVal").value)
+  user_file = document.getElementById("myVal").value*/
+  return false
+}
+
+//*********************** Read skills.json *************************************************************************
+//This is special because there are a ton of local functions inside this method
+//if read is successful, they will be called, creating your experience
+//TODO hempfarm.json
+d3.json("nutrilation.json", function(error, json) {
+
+  if (error) throw error;
+  
+
+ //*************************Set background color and dragging effect *****************
+  var drag = d3.behavior.drag().on("drag", dragged);
+  svg.append("rect") //sets background color
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("fill", "navy")
+      .call(drag);
+
+
+
+  //returns the link length given link l at index i
+  function getLinkLength(l, i) {
+    //this function sets the distance to the node based on user skill and link difficulty
+    //all links to same node have the same 4 variables so it is actually dependent on target node
+
+    if (l.uf == null && l.us == null && l.ls == null && l.lf == null) {
+      return -1
+    }
+
+    var min = 25, max = 120, currentDist = min
+    if (l.uf > user.profile.upper_flexibility) {
+      currentDist += (l.uf - user.profile.upper_flexibility)
+    }
+    if (l.lf > user.profile.lower_flexibility) {
+      currentDist += (l.lf - user.profile.lower_flexibility)
+    }
+    if (l.us > user.profile.upper_strength) {
+      currentDist += (l.us - user.profile.upper_strength)
+    }
+    if (l.ls > user.profile.lower_strength) {
+      currentDist += (l.ls - user.profile.lower_strength)
+    }
+
+    if (currentDist > max) {
+      currentDist = max
+    } /*else if (currentDist < min) { 
+      currentDist = min
+    }*/
+    l.value = currentDist
+    return currentDist
+  }
+
+  dijkstra_initial_setup();
+
+//*********************** Force Link Distance (skill time function) Setup ***********************
+  force
+      .nodes(json.nodes)
+      /*.gravity(function(n) { TODO center less magnitude of skill requirement nodes more toward the center
+        var t = n.ls + n.lf + n.us + n.uf
+        return t / 500
+      })*/
+      .links(json.links)
+      .linkDistance(getLinkLength)
+      .start();
+
+//*********************** Load and Draw Link ***********************
+
+  var link = svg.selectAll(".link")
+      .data(json.links)
+      .enter().append("line")
+      .style("opacity", function(n){return n.opacity})      // set the element opacity
+      .attr("class", "link");
+
+
+//*********************** Load and draw Node ***********************
+  var node = svg.selectAll(".node")
+      .data(json.nodes)
+      .enter().append("g")
+      .attr("class", "node");
+      //.call(force.drag); turns on force
+
+  node.append("circle")
+      .attr("r", node_size)
+      .style("opacity", node_opacity)      
+      .style("fill", node_color)
+      .on("click", node_click)
+      .on("dblclick",function(d){window.location = d.instr});
+
+  
+
+
+  //this will drag the link and node. This is called when the background is dragged... cmd-f ".call(drag)"
+  function dragged(d) {
+    if (current_mode != DRAG_MODE){
+      return
+    }
+    node.attr("transform", function(n) { return "translate("+ (n.x=n.x+ d3.event.dx) + "," + (n.y=n.y+d3.event.dy) + ")"; });
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+  }
+
+  //sets node color on click and initial setup
+  //group 0 action exists, 
+  //group 1 user knows it
+  //group 2 intermediary skill... from known to goal
+  //group 3 user's target
+  //otherwise a default
+
+  function node_size(d) {
+    //console.log(d.size)
+    if (d.size == null || d.size < 12){
+      return 12
+    } 
+    return d.size
+  }
+  function node_color(d) {
+
+    if (d.group == 0) {
+      return group0_color
+    }
+    if (d.group == 1) {
+      return group1_color
+    }
+    if (d.group == 2) {
+      return group2_color
+    }
+    if (d.group == 3) {
+      return group3_color
+    }
+    return "gray" //ideally just get color of d
+  }
+
+  function node_opacity(n) {
+    if (n.group == 0) 
+      return .5
+    return 1
+  }
+
+  function node_click(d) {
+    if (current_mode == SELECT_KNOWN_SKILL_MODE) {
+      //add this node, d, to user known skills...
+      if (d.group == SELECT_KNOWN_SKILL_MODE) {
+        if (d.leaf_count > 0)
+          d.group = SELECT_INTER_SKILL_MODE
+        else
+          d.group = 0
+      } else {
+        d.group = SELECT_KNOWN_SKILL_MODE
+
+        //scales whole system based on this skill.
+        //this creates the behavior of the user entering their known skills
+        //therefore you should scatter benchmarks
+        //you can build on and customize this code
+        //create a separate mode where you select benchmarks and this will adjust variables
+        force.stop()
+        if (d.lf != 0)
+          user.profile.lower_flexibility = d.lf
+        if (d.ls != 0)
+          user.profile.lower_strength = d.ls
+        if (d.uf != 0)
+          user.profile.upper_flexibility = d.uf
+        if (d.us != 0)
+          user.profile.upper_strength = d.us
+        force.start()
+
+        //reset leaf counts and intermediate nodes and call dijkstra for each goal node
+        dijkstra_reset()
+        currentGoals.forEach(function(goal) {
+          dijkstra_click(goal, true)
+        })
+      }
+      d3.select(this).style("fill", node_color); // <----- call to update color of node
+    } else if (current_mode == SELECT_TARGET_MODE) {
+      //find nearest known skill
+      if (d.group == SELECT_TARGET_MODE) {
+        dijkstra_click(d, false)
+
+        //delete the goal from the list by iterating through and adding everything else
+        var newGoals = []
+        currentGoals.forEach(function(g) {
+          if (!(g === d)) {
+            newGoals.push(g)
+          } 
+        })
+        currentGoals = newGoals
+
+        if (d.leaf_count > 0)
+          d.group = SELECT_INTER_SKILL_MODE
+        else
+          d.group = 0 
+        
+      } else {
+        d.group = SELECT_TARGET_MODE
+        var inList = false
+        currentGoals.forEach(function(g) {
+          if (g === d)
+            inList = true
+        })
+        if (!inList)
+          currentGoals.push(d)
+        
+        dijkstra_click(d, true)
+        //update path from closest known by distance... calls djikstras algorithm
+        //get edges then update color of edges and nodes:: n.group = INTER_SKILL_MODE...
+      }
+      
+      d3.select(this).style("fill", node_color);
+    } else if (current_mode == SELECT_INTER_SKILL_MODE) {
+      if (d.group == SELECT_INTER_SKILL_MODE) { 
+        if (d.leaf_count == 0)
+          d.group = 0
+      } else {
+        d.group = SELECT_INTER_SKILL_MODE
+      }
+      d3.select(this).style("fill", node_color);
+    }
+    d3.select(this).style("opacity", node_opacity)
+  }
+  node.append("text") //text for each node, size, offset, and color
+      .attr("dx", 12)
+      .attr("dy", ".35em")
+      .attr("fill", "white")//func [ node_click ] instead of "white" here for color to make the text same as node
+      .text(function(d) { return d.name })
+      //.on("click", node_click)
+
+  function draw_user_profile() {
+    user.profile.known_skills.forEach(function(kn) {
+      json.nodes[kn].group = SELECT_KNOWN_SKILL_MODE;
+    })
+    user.profile.goal_skills.forEach(function(gn) {
+      json.nodes[gn].group = SELECT_TARGET_MODE
+      dijkstra_click( json.nodes[gn], true)
+    })
+  }
+  
+
+
+//*********************** Load, Draw, Set Behaviour of Buttons ******************
+//to add a button, add it to the skills.json file
+//then add the functionality to button click
+//you can create modes (global static variables in all caps [cmd-f "SELECT_KNOWN_SKILL_MODE"])
+//these can then be used in other functions, such as node_click
+  var button = svg.selectAll(".button")
+      .data(json.buttons)
+      .enter().append("g") //appends a graphic
+      .attr("transform", function(d) {
+          return "translate(" + 20+"," + (d.num+1) * button_size*2 + ")";
+      })
+      .attr("class", "button")
+      .on("click", button_click);
+  button.append("rect")
+      .attr("x", function(d) { (d.num+1)*(button_size*2+5)})
+      .attr("y", function(d) { 10})
+      .attr("width", button_size)
+      .attr("height", button_size)
+      .style("fill", function(d) {return d.color});
+  button.append("text")
+      .attr("dx", 0)
+      .attr("dy", 0)
+      .attr("fill", "white")
+      .text(function(d) { return d.name });
+
+  function button_click(d) { //changes the mode, a variable kept above, see 
+    current_mode = d.num;
+    if (current_mode == TEST_MODE) {
+      //How to update link distances
+      force.stop();
+
+      if (user.profile.lower_flexibility > 20)
+        user.profile.lower_flexibility -= 20
+      else
+        user.profile.lower_flexibility = 0
+
+      if (user.profile.lower_strength> 20)
+        user.profile.lower_strength -= 20
+      else
+        user.profile.lower_strength = 0
+
+      if (user.profile.upper_flexibility > 20)
+        user.profile.upper_flexibility -= 20
+      else
+        user.profile.upper_flexibility = 0
+
+      if (user.profile.upper_strength > 20)
+        user.profile.upper_strength -= 20
+      else
+        user.profile.upper_strength = 0
+
+      force.start();
+      
+    } else if (current_mode == LOAD_USER_MODE) {
+      complete_reset()
+      force.stop()
+      console.log(document.getElementById("myVal").value)
+      load_user_profile(document.getElementById("myVal").value)
+      force.start()
+      draw_user_profile()
+    } else if (current_mode == 7) {
+      var xmlhttp;
+      if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+      }
+      else {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+          alert('done')
+        }
+      }
+
+      xmlhttp.open("POST",document.getElementById("myVal").value,true);
+      xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+      console.log(JSON.stringify(user))
+      xmlhttp.send(JSON.stringify(user));
+      console.log("sent file")
+    }
+    return 1;
+  }
+
+  /*function handleFormClick(event) {
+    console.log(document.getElementById("myVal").value)
+    complete_reset()
+    force.stop()
+    load_user_profile("isaac_profile.json")
+    force.start()
+    draw_user_profile()
+    return false
+  }*/
+
+  function isKnownPoint(node) {
+    if (node.group == SELECT_KNOWN_SKILL_MODE) {
+      return true
+    }
+    return false
+  }
+
+  //********************** Dijkstra Setup functions *******************************
+  //dijkstra_initial_setup();
+  draw_user_profile();
+  function dijkstra_initial_setup() {
+
+    console.log("starting dijkstra_initial_setup")
+    for (var ni = 0; ni < json.nodes.length; ni++) {
+    //json.nodes.each(function(n, ni) {
+      var n = json.nodes[ni]
+      //console.log(n)
+      n.links = []
+      n.leaf_count = 0
+      n.index = ni
+      if (n.next_subs != null ) {
+        if (n.next_subs > 0) {
+          for (var i = 1; i < n.next_subs+1; i++) {
+            //console.log("pushing link")
+            var new_link = {"source":n.index,"target":n.index+i,"value":10, "lf":7*n.next_subs, "opacity":0.3, "index":json.links.length}
+            json.links.push(new_link)
+
+            //console.log(link)
+          }
+        }
+      }
+    }
+    for (var li = 0; li < json.links.length; li++) {
+    //json.links.each(function(l, li) {
+      l = json.links[li]
+      l.leaf_count = 0
+      l.index = li
+      var new_link = {"source": l.source.index, "target": l.target.index, "value": l.value, "index": l.index}
+      //console.log(l.source)
+      //console.log(json.nodes[l.source].links)
+      json.nodes[l.source].links.push(new_link)
+      json.nodes[l.target].links.push(new_link)
+    }
+  }
+
+  function complete_reset() {
+    node.each(function(d) {
+      d.leaf_count = 0
+      d.group = 0
+    })
+    link.each(function(l) {
+      l.leaf_count = 0
+      l.opacity = .3
+    })
+  }
+
+  function dijkstra_reset() {
+    node.each(function(d) {
+      d.leaf_count = 0
+      if (d.group == SELECT_INTER_SKILL_MODE)
+        d.group = 0
+    })
+    link.each(function(l) {
+      l.leaf_count = 0
+      l.opacity = .3
+    })
+  }
+
+  function dijkstra_precall_setup(sourceindex) {
+      //console.log(d.rnasdfas)
+      node.each(function(d) {
+        d.dist = Infinity; 
+      })
+      json.nodes[sourceindex].dist = 0
+  }
+
+
+  //called by node_click if the red color is set to a node. 
+  function dijkstra_click (d, selectingTarget) { 
+  
+      dijkstra_precall_setup(d.index)
+
+      //returns the indeces of the path from this goal to a known, if empty, nothing is found
+      var inter_path = dijkstra( json.nodes, json.nodes[d.index], [json.nodes[d.index]], isKnownPoint)
+
+      var lastNodeIndex = -1;
+      inter_path.forEach(function(ni) {
+
+        //not beginning or end, so increment leaf count
+        if (json.nodes[ni].group != SELECT_KNOWN_SKILL_MODE && selectingTarget) {
+          if (json.nodes[ni].group == 0)
+            json.nodes[ni].group = SELECT_INTER_SKILL_MODE;
+          //if (json.nodes[ni].group == 0 || json.nodes[ni].group == SELECT_INTER_SKILL_MODE)
+          json.nodes[ni].leaf_count += 1
+        } 
+        if (json.nodes[ni].group != SELECT_KNOWN_SKILL_MODE && !selectingTarget) {
+          json.nodes[ni].leaf_count -= 1
+          if (json.nodes[ni].leaf_count <= 0) {
+            json.nodes[ni].group = 0;
+            json.nodes[ni].leaf_count = 0
+          }
+        }
+
+        //this looks through each node's links to find the current one so we can highlight it too.
+        //ignoring the first one because there is no edge from previous to current
+        if (lastNodeIndex > -1) {
+          json.nodes[ni].links.forEach(function(l) {
+            var currentLink = l.source == ni && lastNodeIndex == l.target;
+            currentLink = currentLink || (l.target == ni && lastNodeIndex == l.source);
+            if (currentLink) { //this edge needs to be highlighted
+              if (selectingTarget) {
+                json.links[l.index].opacity = 1
+                json.links[l.index].leaf_count += 1
+              } else {
+                json.links[l.index].leaf_count -= 1
+                if (json.links[l.index].leaf_count <= 0) {
+                  json.links[l.index].opacity = .3
+                  json.links[l.index].leaf_count = 0
+                }
+              }
+            }
+          })
+        }
+        
+
+        lastNodeIndex = ni;
+
+        //move coloring here
+        //add other transitions
+        //put delay, this will add nice effect 
+      })
+      d3.selectAll("line").style("opacity", function(l){return l.opacity})
+      d3.selectAll("circle").style("fill", node_color);
+      d3.selectAll("circle").style("opacity", node_opacity);
+  }
+  
+
+  //**************** initially places nodes using force after everything has been set up
+  force.on("tick", function() { 
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+  });
+});
+</script>
+</body>
+</html>
