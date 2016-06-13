@@ -24,7 +24,7 @@ function dijkstra(nodes, source, frontier, dest_func) {
 
         var indexOfPotentialNode = l.source == n.index ? l.target : l.source
         
-        //if (nodes[indexOfPotentialNode] != null) { //valid potential point to check
+        if (nodes[indexOfPotentialNode] != null) { //valid potential point to check
           if (nodes[indexOfPotentialNode].dist == Infinity) { //still has unexplored nodes so far
             
             //console.log("found infinity node")
@@ -39,7 +39,7 @@ function dijkstra(nodes, source, frontier, dest_func) {
              parent_node = n.index
             }
           }
-        //} 
+        } 
       })
 
       if (more_to_explore) { //this node should be explored more in next dijkstra call
