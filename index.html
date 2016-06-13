@@ -373,7 +373,7 @@ d3.json("nutrilation.json", function(error, json) {
       console.log(document.getElementById("myVal").value)
       load_user_profile(document.getElementById("myVal").value)
       force.start()
-      draw_user_profile()
+      //draw_user_profile()
     } else if (current_mode == 7) {
       var xmlhttp;
       if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -416,7 +416,7 @@ d3.json("nutrilation.json", function(error, json) {
 
   //********************** Dijkstra Setup functions *******************************
   //dijkstra_initial_setup();
-  draw_user_profile();
+  //draw_user_profile();
   function dijkstra_initial_setup() {
 
     console.log("starting dijkstra_initial_setup")
