@@ -23,7 +23,7 @@
 
 <form name="myform" onSubmit="return handleFormClick()">
     <input name="Submit"  type="submit" value="New Food Name" >
-    <input type="text" id="myVal" placeholder="Add some text&hellip;">
+    <input type="text" id="myVal" placeholder="Add Food Name&hellip;">
   </form>
 <script src="../nutrigraph/d3.v3.min.js"></script>  <!-- pulls the whole d3 library into our server instance -->
 <!-- //d3js.org/d3.v3.min.js  this is from a different server, probably slower-->
@@ -185,7 +185,7 @@ d3.json("nutrilation.json", function(error, json) {
       .style("opacity", node_opacity)      
       .style("fill", node_color)
       .on("click", node_click)
-      .on("dblclick",function(d){window.location = d.instr});
+      .on("dblclick",function(d){window.location = "https://www.google.com/?gws_rd=ssl#q="+d.name});
 
   
 
