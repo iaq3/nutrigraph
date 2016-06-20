@@ -21,7 +21,10 @@
 </style>
 <body>
 
-
+<form name="myform" onSubmit="return handleFormClick()">
+    <input name="Submit"  type="submit" value="New User Profile" >
+    <input type="text" id="myVal" placeholder="Add some text&hellip;">
+  </form>
 <script src="../nutrigraph/d3.v3.min.js"></script>  <!-- pulls the whole d3 library into our server instance -->
 <!-- //d3js.org/d3.v3.min.js  this is from a different server, probably slower-->
 <!--../sarahs/d3.v3.min.js put this in above instead to run the local minimal d3, which does not require internet-->
@@ -53,7 +56,7 @@ var width = 960, //size constants, if you want to edit the size, change only the
 
     currentGoals = [],
 
-    user_name = "isaac_profile.json";
+    user_name = "sarah_profile.json";
 
 
 
@@ -79,7 +82,7 @@ function load_user_profile(user_json_name){
   })
 }
 if (!user_file) //remove this soon
-  load_user_profile("isaac_profile.json")
+  load_user_profile("sarah_profile.json")
 else 
   load_user_profile(user_file)
 
@@ -147,9 +150,9 @@ d3.json("nutrilation.json", function(error, json) {
     }*/
     l.value = currentDist
     return currentDist
-  };
+  }
 
-  //dijkstra_initial_setup();
+  dijkstra_initial_setup();
 
 //*********************** Force Link Distance (skill time function) Setup ***********************
   force
@@ -265,16 +268,16 @@ d3.json("nutrilation.json", function(error, json) {
         force.start()
 
         //reset leaf counts and intermediate nodes and call dijkstra for each goal node
-        //dijkstra_reset()
+        dijkstra_reset()
         currentGoals.forEach(function(goal) {
-          //dijkstra_click(goal, true)
+          dijkstra_click(goal, true)
         })
       }
       d3.select(this).style("fill", node_color); // <----- call to update color of node
     } else if (current_mode == SELECT_TARGET_MODE) {
       //find nearest known skill
       if (d.group == SELECT_TARGET_MODE) {
-        //dijkstra_click(d, false)
+        dijkstra_click(d, false)
 
         //delete the goal from the list by iterating through and adding everything else
         var newGoals = []
@@ -300,7 +303,7 @@ d3.json("nutrilation.json", function(error, json) {
         if (!inList)
           currentGoals.push(d)
         
-        //dijkstra_click(d, true)
+        dijkstra_click(d, true)
         //update path from closest known by distance... calls djikstras algorithm
         //get edges then update color of edges and nodes:: n.group = INTER_SKILL_MODE...
       }
@@ -330,7 +333,7 @@ d3.json("nutrilation.json", function(error, json) {
     })
     user.profile.goal_skills.forEach(function(gn) {
       json.nodes[gn].group = SELECT_TARGET_MODE
-      //dijkstra_click( json.nodes[gn], true)
+      dijkstra_click( json.nodes[gn], true)
     })
   }
   
@@ -438,8 +441,8 @@ d3.json("nutrilation.json", function(error, json) {
 
   //********************** Dijkstra Setup functions *******************************
   //dijkstra_initial_setup();
-  //draw_user_profile();
-  /*function dijkstra_initial_setup() {
+  draw_user_profile();
+  function dijkstra_initial_setup() {
 
     console.log("starting dijkstra_initial_setup")
     for (var ni = 0; ni < json.nodes.length; ni++) {
@@ -472,9 +475,9 @@ d3.json("nutrilation.json", function(error, json) {
       json.nodes[l.source].links.push(new_link)
       json.nodes[l.target].links.push(new_link)
     }
-  }*/
+  }
 
-  /*function complete_reset() {
+  function complete_reset() {
     node.each(function(d) {
       d.leaf_count = 0
       d.group = 0
@@ -503,11 +506,11 @@ d3.json("nutrilation.json", function(error, json) {
         d.dist = Infinity; 
       })
       json.nodes[sourceindex].dist = 0
-  }*/
+  }
 
 
   //called by node_click if the red color is set to a node. 
-  /*function dijkstra_click (d, selectingTarget) { 
+  function dijkstra_click (d, selectingTarget) { 
   
       dijkstra_precall_setup(d.index)
 
@@ -563,7 +566,7 @@ d3.json("nutrilation.json", function(error, json) {
       d3.selectAll("line").style("opacity", function(l){return l.opacity})
       d3.selectAll("circle").style("fill", node_color);
       d3.selectAll("circle").style("opacity", node_opacity);
-  }*/
+  }
   
 
   //**************** initially places nodes using force after everything has been set up
