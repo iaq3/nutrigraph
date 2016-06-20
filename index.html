@@ -125,7 +125,8 @@ d3.json("nutrilation.json", function(error, json) {
     //this function sets the distance to the node based on user skill and link difficulty
     //all links to same node have the same 4 variables so it is actually dependent on target node
 
-    
+    if (l.uf == null && l.lf == null && l.us == null && l.ls == null)
+      return -1
 
     var min = 25, max = 120, currentDist = min
     if (l.uf > user.profile.upper_flexibility) {
@@ -143,9 +144,9 @@ d3.json("nutrilation.json", function(error, json) {
 
     if (currentDist > max) {
       currentDist = max
-    } /*else if (currentDist < min) { 
+    } else if (currentDist < min) { 
       currentDist = min
-    }*/
+    }
     l.value = currentDist
     return currentDist
   }
