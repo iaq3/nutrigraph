@@ -1,17 +1,17 @@
 {
     "nodes":[
 
-        {"name":"Fats", "index":0, "group":0, "lf":30, "ls":10, "size":120,
+        {"name":"Fats", "index":0, "group":0, "size":120, "x": 100, "y":300, "fixed":true,
             "instr": "https://en.wikipedia.org/wiki/Fat"},
-        {"name":"Protein", "index":1, "group":0, "lf":30, "ls":10, "size":200,
-            "instr": "http://www.landandfarm.com/property/40_Acres_Three_Artesian_Wells_Close_To_Mountains-2543439/"},
-        {"name":"Vitamins", "index":2, "group":0, "lf":30, "ls":10, "size":150,
+        {"name":"Protein", "index":1, "group":0, "size":200, "x": 300, "y":300, "fixed":true,
+            "instr": "https://en.wikipedia.org/wiki/Protein_(nutrient)"},
+        {"name":"Vitamins", "index":2, "group":0, "size":150, "x": 600, "y":300, "fixed":true,
             "instr": "https://en.wikipedia.org/wiki/Vitamin"},
-        {"name":"Minerals", "index":3, "group":0, "lf":30, "ls":10, "size":150,
+        {"name":"Minerals", "index":3, "group":0, "size":150, "x":900, "y":300, "fixed":true,
             "instr": "https://en.wikipedia.org/wiki/Mineral"},
 
 
-        {"name":"Carbs", "index":4, "group":0, "lf":20, "ls":10, "size":80, "next_subs":7,
+        {"name":"Carbs", "index":4, "group":0, "size":80, "next_subs":7, "x":-100, "y":300, "fixed":true,
             "instr": "https://en.wikipedia.org/wiki/Carbohydrate"},   
         {"name":"Fiber", "index":5, "group":0, "lf":30, "ls":10,
             "instr": "http://www.hsph.harvard.edu/nutritionsource/carbohydrates/fiber/"},
@@ -165,11 +165,11 @@
             "instr": "https://en.wikipedia.org/wiki/Omega-6_fatty_acid"},
         {"name":"Saturated Fats", "index":74, "group":2, "lf":30, "ls":10,
             "instr": "https://en.wikipedia.org/wiki/Decorticator"},
-        {"name":"Trans Fats", "index":75, "group":2, "lf":30, "ls":10,
+        {"name":"Trans Fats", "index":75, "group":2, 
             "instr": "https://en.wikipedia.org/wiki/Decorticator"},
 
 
-        {"name":"Hemp Seed", "index":76, "group":4, "lf":30, "ls":10,
+        {"name":"Hemp Seed", "index":76, "group":4, "size":30,
             "instr": "http://draxe.com/7-hemp-seed-benefits-nutrition-profile/"}
         
              
@@ -187,13 +187,7 @@
         {"source":3,"target":54,"value":1, "index":0, "uf":0, "lf":30, "us":0, "ls":10, "opacity":0.3},
         {"source":3,"target":62,"value":1, "index":1, "uf":0, "lf":50, "us":0, "ls":15, "opacity":0.3},
 
-        {"source":76,"target":13,"value":0, "opacity":0.3},
-        {"source":76,"target":14,"value":0, "uf":0, "lf":50, "us":0, "ls":15, "opacity":0.3},
-        {"source":76,"target":30,"value":0, "index":0,"opacity":0.3},
-        {"source":76,"target":31,"value":0, "index":1,"opacity":0.3},
-        {"source":76,"target":32,"value":0, "opacity":0.3},
-        {"source":76,"target":33,"value":0,  "opacity":0.3},
-        {"source":76,"target":68,"value":0, "opacity":0.3},
+        
 
         {"source":0,"target":12,"value":1, "index":5, "uf":0, "lf":50, "us":0, "ls":15, "opacity":0.3}
 
@@ -206,10 +200,9 @@
         "lower_strength":20
     }, 
     "buttons":[
-        {"num":1, "name":"Select Known Skill", "color":"yellow"},
-        {"num":2, "name":"Select Intermediary Skill", "color":"orange"},
-        {"num":3, "name":"Select Goal Skill", "color":"red"},
-        {"num":4, "name":"Explore", "color":"magenta"},
-        {"num":5, "name":"Reduce User Skill Levels", "color":"cyan"}
+        {"num":1, "name":"Necessary", "color":"yellow"},
+        {"num":2, "name":"Neutral", "color":"orange"},
+        {"num":3, "name":"Unhealthy", "color":"red"},
+        {"num":4, "name":"Explore", "color":"magenta"}
     ]
 }

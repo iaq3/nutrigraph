@@ -22,7 +22,7 @@
 <body>
 
 <form name="myform" onSubmit="return handleFormClick()">
-    <input name="Submit"  type="submit" value="New User Profile" >
+    <input name="Submit"  type="submit" value="New Food Name" >
     <input type="text" id="myVal" placeholder="Add some text&hellip;">
   </form>
 <script src="../nutrigraph/d3.v3.min.js"></script>  <!-- pulls the whole d3 library into our server instance -->
@@ -34,8 +34,8 @@
 console.log("Starting new script")
 
 //*********************** Set Global Constants ***********************
-var width = 960, //size constants, if you want to edit the size, change only these
-    height = 500,
+var width = 1060, //size constants, if you want to edit the size, change only these
+    height = 800,
     button_size = 20,
 
     //button driven pointer modes
@@ -67,8 +67,8 @@ var svg = d3.select("body").append("svg") //sets size for webbrowser
 //*********************** Force Defaults ***********************
 //will gravitate nodes toward center of screen and repel them from each other
 var force = d3.layout.force()
-    .gravity(.15)
-    .charge(-350)
+    .gravity(0)
+    .charge(-150)
     .size([width, height]);
 
 var user;
@@ -125,9 +125,7 @@ d3.json("nutrilation.json", function(error, json) {
     //this function sets the distance to the node based on user skill and link difficulty
     //all links to same node have the same 4 variables so it is actually dependent on target node
 
-    if (l.uf == null && l.us == null && l.ls == null && l.lf == null) {
-      return -1
-    }
+    
 
     var min = 25, max = 120, currentDist = min
     if (l.uf > user.profile.upper_flexibility) {
@@ -156,7 +154,7 @@ d3.json("nutrilation.json", function(error, json) {
 
 //*********************** Force Link Distance (skill time function) Setup ***********************
   force
-      .nodes(json.nodes)
+      .nodes(json.nodes) //
       /*.gravity(function(n) { TODO center less magnitude of skill requirement nodes more toward the center
         var t = n.ls + n.lf + n.us + n.uf
         return t / 500
