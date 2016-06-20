@@ -1,0 +1,10 @@
+{
+	"profile":{
+        "upper_flexibility":20,
+        "lower_flexibility":20,
+        "upper_strength":20,
+        "lower_strength":20,
+        "known_skills":[],
+        "goal_skills":[]
+    }
+}
